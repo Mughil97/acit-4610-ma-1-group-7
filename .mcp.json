@@ -1,0 +1,15 @@
+{
+  "mcpServers": {
+    "jupyter": {
+      "command": ".venv/bin/jupyter-mcp-server",
+      "args": [
+        "start"
+      ],
+      "env": {
+        "JUPYTER_URL": "http://localhost:8888",
+        "JUPYTER_TOKEN": "acit4610",
+        "ALLOW_IMG_OUTPUT": "true"
+      }
+    }
+  }
+}

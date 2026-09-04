@@ -1,0 +1,4 @@
+# Runtime dependencies for the ACIT4610 JSSP genetic algorithm
+numpy>=1.26
+pandas>=2.1
+matplotlib>=3.8

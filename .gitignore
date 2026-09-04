@@ -1,0 +1,12 @@
+__pycache__/
+*.pyc
+.venv/
+venv/
+.DS_Store
+
+# generated output
+results/*
+!results/.gitkeep
+
+# draft report (not submitted from the repo)
+.report/
