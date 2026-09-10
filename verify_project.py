@@ -135,6 +135,22 @@ def check_end_to_end_ga():
     rng = random.Random(2026)
 
     result = jssp.run_ga(jobs, params, rng)
+
+    # History contains the initial population best plus one value per generation.
+    assert len(result["history"]) == params["generations"] + 1
+
+    # Best-so-far must never get worse because this is a minimization problem.
+    assert all(
+        result["history"][i + 1] <= result["history"][i]
+        for i in range(len(result["history"]) - 1)
+    )
+
+    # The final best-so-far value must match the stored global best.
+    assert result["history"][-1] == result["best_makespan"]
+
+    # Convergence must refer to a valid generation.
+    assert 0 <= result["convergence_gen"] <= params["generations"]
+
     assert result["time_to_best_s"] >= 0
     assert result["execution_time_s"] >= 0
 
