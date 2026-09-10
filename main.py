@@ -122,14 +122,28 @@ def main():
                     f"conv gen {row['mean_conv_gen']}"
                 )
 
+                run_histories = [r["history"] for r in results]
+
+                history_length = min(len(h) for h in run_histories)
+
+                mean_history = [
+                    statistics.mean(h[generation] for h in run_histories)
+                    for generation in range(history_length)
+                ]
+
+                histories[params["name"]] = mean_history
+
                 champion = min(results, key=lambda r: r["best_makespan"])
-                histories[params["name"]] = champion["history"]
-                if best_overall is None or champion["best_makespan"] < best_overall["best_makespan"]:
+
+                if (
+                    best_overall is None
+                    or champion["best_makespan"] < best_overall["best_makespan"]
+                ):
                     best_overall = champion
 
             plots.convergence(
                 histories,
-                f"{instance} - convergence (best run per parameter set)",
+                f"{instance} - mean best-so-far convergence across runs",
                 f"{config.RESULTS_DIR}/{instance}_convergence.png",
             )
 

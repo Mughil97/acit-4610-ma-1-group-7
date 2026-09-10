@@ -44,7 +44,7 @@ python example_decode.py la01      # same, on a real instance
 | `summary.csv`               | best, worst, mean, std, time-to-best, execution time, convergence generation |
 | `timing.csv`                | mean time-to-best, instances x parameter sets         |
 | `execution_timing.csv`      | mean total execution time, instances x parameter sets |
-| `<instance>_convergence.png`| best-so-far makespan per generation                   |
+| `<instance>_convergence.png`| mean best-so-far makespan per generation across repeated runs                   |
 | `<instance>_gantt.png`      | Gantt chart of the best schedule found                |
 
 ## Test problems
