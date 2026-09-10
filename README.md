@@ -136,9 +136,9 @@ directly (lower wins), so no fitness scaling is needed.
 
 | Set | Population | Generations | Crossover | Mutation | Tournament | Elitism |
 | --- | ---------- | ----------- | --------- | -------- | ---------- | ------- |
-| P1  | 50         | 100         | 0.70      | 0.05     | 3          | 2       |
-| P2  | 100        | 200         | 0.85      | 0.10     | 3          | 2       |
-| P3  | 200        | 300         | 0.95      | 0.20     | 5          | 4       |
+| P1  | 50         | 100         | 0.70      | 0.05     | 2          | 2       |
+| P2  | 100        | 200         | 0.85      | 0.10     | 2          | 2       |
+| P3  | 200        | 300         | 0.95      | 0.20     | 2          | 2       |
 
 ## Statistical metrics
 

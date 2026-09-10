@@ -135,12 +135,24 @@ def crossover(parent_a, parent_b, rng):
 
 
 def mutate(chromosome, rng):
-    """Swap two genes."""
+    """Swap two positions containing different job IDs."""
     child = chromosome[:]
-    i, j = rng.sample(range(len(child)), 2)
-    child[i], child[j] = child[j], child[i]
-    return child
 
+    if len(child) < 2 or len(set(child)) < 2:
+        return child
+
+    i = rng.randrange(len(child))
+
+    different_positions = [
+        j for j in range(len(child))
+        if j != i and child[j] != child[i]
+    ]
+
+    j = rng.choice(different_positions)
+
+    child[i], child[j] = child[j], child[i]
+
+    return child
 
 def run_ga(jobs, params, rng):
     """Run the GA once.
