@@ -125,7 +125,7 @@ def check_end_to_end_ga():
 
     # Copy P1 so the real configuration is not modified.
     # Start from P1 but reduce population/generations
-    #so this verification finishes quickly. 
+    #so this verification finishes quickly.
     params = dict(config.PARAM_SETS[0])
 
     # Keep this verification run intentionally short.
@@ -135,6 +135,13 @@ def check_end_to_end_ga():
     rng = random.Random(2026)
 
     result = jssp.run_ga(jobs, params, rng)
+    assert result["time_to_best_s"] >= 0
+    assert result["execution_time_s"] >= 0
+
+    assert (
+        result["time_to_best_s"]
+        <= result["execution_time_s"]
+    )
 
     best_chromosome = result["best_chromosome"]
 

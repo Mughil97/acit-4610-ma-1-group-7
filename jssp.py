@@ -192,6 +192,10 @@ def run_ga(jobs, params, rng):
 
     best = min(range(pop_size), key=lambda i: scores[i])
     best_chromosome, best_score = population[best][:], scores[best]
+
+    # The current best was discovered during initial population evaluation.
+    time_to_best = time.perf_counter() - started
+
     history = [best_score]
     convergence_gen = 0
 
@@ -245,13 +249,17 @@ def run_ga(jobs, params, rng):
             best_chromosome = population[best][:]
             best_score = scores[best]
             convergence_gen = generation
+            time_to_best = time.perf_counter() - started
 
         history.append(best_score)
+
+    execution_time = time.perf_counter() - started
 
     return {
         "best_makespan": best_score,
         "best_chromosome": best_chromosome,
         "history": history,
         "convergence_gen": convergence_gen,
-        "time": time.perf_counter() - started,
+        "time_to_best_s": time_to_best,
+        "execution_time_s": execution_time,
     }

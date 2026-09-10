@@ -24,7 +24,8 @@ import plots
 def summarise(results, instance, params_name):
     """Aggregate the runs of one (instance, parameter set) cell."""
     best = [r["best_makespan"] for r in results]
-    times = [r["time"] for r in results]
+    time_to_best = [r["time_to_best_s"] for r in results]
+    execution_times = [r["execution_time_s"] for r in results]
     optimum = config.OPTIMUM.get(instance)
 
     return {
@@ -35,8 +36,8 @@ def summarise(results, instance, params_name):
         "worst": max(best),
         "mean": round(statistics.mean(best), 2),
         "std": round(statistics.pstdev(best), 2),
-        "mean_time_s": round(statistics.mean(times), 2),
-        "total_time_s": round(sum(times), 2),
+        "mean_time_to_best_s": round(statistics.mean(time_to_best), 4),
+        "mean_execution_time_s": round(statistics.mean(execution_times), 4),
         "mean_conv_gen": round(statistics.mean(r["convergence_gen"] for r in results), 1),
         "optimum": optimum,
         "gap_%": round(100 * (min(best) - optimum) / optimum, 2) if optimum else None,
@@ -83,9 +84,13 @@ def main():
                 row = summarise(results, instance, params["name"])
                 summaries.append(row)
 
-                print(f"  {params['name']}: best {row['best']}  worst {row['worst']}  "
-                      f"mean {row['mean']}  std {row['std']}  "
-                      f"{row['mean_time_s']}s/run  conv gen {row['mean_conv_gen']}")
+                print(
+                    f"  {params['name']}: best {row['best']}  worst {row['worst']}  "
+                    f"mean {row['mean']}  std {row['std']}  "
+                    f"time-to-best {row['mean_time_to_best_s']}s  "
+                    f"runtime {row['mean_execution_time_s']}s  "
+                    f"conv gen {row['mean_conv_gen']}"
+            )
 
                 champion = min(results, key=lambda r: r["best_makespan"])
                 histories[params["name"]] = champion["history"]
@@ -109,13 +114,33 @@ def main():
     table = pd.DataFrame(summaries)
     table.to_csv(f"{config.RESULTS_DIR}/summary.csv", index=False)
 
-    timing = table.pivot(index="instance", columns="params", values="mean_time_s")
-    timing.to_csv(f"{config.RESULTS_DIR}/timing.csv")
+    time_to_best_table = table.pivot(
+        index="instance",
+        columns="params",
+        values="mean_time_to_best_s"
+    )
+
+    execution_time_table = table.pivot(
+        index="instance",
+        columns="params",
+        values="mean_execution_time_s"
+    )
+
+    time_to_best_table.to_csv(
+        f"{config.RESULTS_DIR}/timing.csv"
+    )
+
+    execution_time_table.to_csv(
+        f"{config.RESULTS_DIR}/execution_timing.csv"
+    )
 
     print("\n=== summary ===")
     print(table.to_string(index=False))
-    print("\n=== mean run time (seconds) ===")
-    print(timing.to_string())
+    print("\n=== mean time to best (seconds) ===")
+    print(time_to_best_table.to_string())
+
+    print("\n=== mean execution time (seconds) ===")
+    print(execution_time_table.to_string())
     print(f"\nsaved to {config.RESULTS_DIR}/")
 
 

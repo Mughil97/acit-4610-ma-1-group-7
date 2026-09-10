@@ -41,10 +41,11 @@ python example_decode.py la01      # same, on a real instance
 
 | File                        | Contents                                             |
 | --------------------------- | ---------------------------------------------------- |
-| `summary.csv`               | best, worst, mean, std, time, convergence generation |
-| `timing.csv`                | mean run time, instances x parameter sets            |
-| `<instance>_convergence.png`| best-so-far makespan per generation                  |
-| `<instance>_gantt.png`      | Gantt chart of the best schedule found               |
+| `summary.csv`               | best, worst, mean, std, time-to-best, execution time, convergence generation |
+| `timing.csv`                | mean time-to-best, instances x parameter sets         |
+| `execution_timing.csv`      | mean total execution time, instances x parameter sets |
+| `<instance>_convergence.png`| best-so-far makespan per generation                   |
+| `<instance>_gantt.png`      | Gantt chart of the best schedule found                |
 
 ## Test problems
 
@@ -163,8 +164,9 @@ The reported metrics are:
 - **worst** - highest `Cmax` observed across the runs;
 - **mean** - average `Cmax` across the runs;
 - **std** - standard deviation of the run results;
-- **mean_time_s** - mean wall-clock execution time per run;
 - **mean_conv_gen** - mean generation of the last global-best improvement across runs;
+- **mean_time_to_best_s** - mean elapsed time at which the final global-best solution was discovered;
+- **mean_execution_time_s** - mean wall-clock time required to complete the full GA run;
 - **gap_%** - percentage difference between the best observed makespan and the
   JSPLib best-known makespan.
 
