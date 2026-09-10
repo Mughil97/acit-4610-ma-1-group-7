@@ -19,12 +19,12 @@ OPTIMUM = {
 
 PARAM_SETS = [
     {
-        "name": "P1", # default parameters from the report
+        "name": "P1", 
         "pop_size": 50, # population size
         "generations": 100, # number of generations
         "p_crossover": 0.7, # probability of crossover
         "p_mutation": 0.05, # probability of mutation
-        "tournament_k": 3, # tournament size for selection
+        "tournament_k": 2, # tournament size for selection
         "elitism": 2, # number of best individuals to carry over unchanged to the next generation
     },
     {
@@ -33,7 +33,7 @@ PARAM_SETS = [
         "generations": 200,
         "p_crossover": 0.85,
         "p_mutation": 0.10,
-        "tournament_k": 3,
+        "tournament_k": 2,
         "elitism": 2,
     },
     {
@@ -42,8 +42,8 @@ PARAM_SETS = [
         "generations": 300,
         "p_crossover": 0.95,
         "p_mutation": 0.20,
-        "tournament_k": 5,
-        "elitism": 4,
+        "tournament_k": 2,
+        "elitism": 2,
     },
 ]
 
