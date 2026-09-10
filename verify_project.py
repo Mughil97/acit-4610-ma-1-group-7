@@ -79,6 +79,9 @@ def check_instance(instance_name):
 
     assert chromosome_is_valid(mutant, jobs)
 
+    if len(set(child)) > 1:
+        assert mutant != child
+
     # ---------------------------------------------------------
     # 4. DECODING / SBA - Decode chromosome into a schedule.
     # ---------------------------------------------------------
