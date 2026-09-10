@@ -28,6 +28,18 @@ def summarise(results, instance, params_name):
     execution_times = [r["execution_time_s"] for r in results]
     optimum = config.OPTIMUM.get(instance)
 
+    bks_hits = (
+        sum(value <= optimum for value in best)
+        if optimum is not None
+        else 0
+    )
+
+    bks_hit_rate = (
+        100.0 * bks_hits / len(best)
+        if optimum is not None
+        else None
+    )
+
     return {
         "instance": instance,
         "params": params_name,
@@ -35,12 +47,26 @@ def summarise(results, instance, params_name):
         "best": min(best),
         "worst": max(best),
         "mean": round(statistics.mean(best), 2),
-        "std": round(statistics.pstdev(best), 2),
+        "std": round(
+            statistics.stdev(best) if len(best) > 1 else 0.0,     #stdev treats the observed stochastis runs as a sample
+            3,
+        ),
         "mean_time_to_best_s": round(statistics.mean(time_to_best), 4),
         "mean_execution_time_s": round(statistics.mean(execution_times), 4),
         "mean_conv_gen": round(statistics.mean(r["convergence_gen"] for r in results), 1),
         "optimum": optimum,
-        "gap_%": round(100 * (min(best) - optimum) / optimum, 2) if optimum else None,
+        "best_gap_%": round(
+            100 * (min(best) - optimum) / optimum,
+            2,
+        ) if optimum is not None else None,
+
+        "mean_gap_%": round(
+            100 * (statistics.mean(best) - optimum) / optimum,
+            2,
+        ) if optimum is not None else None,
+        "bks_hit_%": round(bks_hit_rate, 2)
+        if bks_hit_rate is not None
+        else None,
     }
 
 
@@ -85,12 +111,16 @@ def main():
                 summaries.append(row)
 
                 print(
-                    f"  {params['name']}: best {row['best']}  worst {row['worst']}  "
-                    f"mean {row['mean']}  std {row['std']}  "
+                    f"  {params['name']}: "
+                    f"best {row['best']}  "
+                    f"worst {row['worst']}  "
+                    f"mean {row['mean']}  "
+                    f"std {row['std']}  "
+                    f"BKS hit {row['bks_hit_%']}%  "
                     f"time-to-best {row['mean_time_to_best_s']}s  "
                     f"runtime {row['mean_execution_time_s']}s  "
                     f"conv gen {row['mean_conv_gen']}"
-            )
+                )
 
                 champion = min(results, key=lambda r: r["best_makespan"])
                 histories[params["name"]] = champion["history"]

@@ -163,12 +163,13 @@ The reported metrics are:
 - **best** - lowest `Cmax` observed across the runs;
 - **worst** - highest `Cmax` observed across the runs;
 - **mean** - average `Cmax` across the runs;
-- **std** - standard deviation of the run results;
-- **mean_conv_gen** - mean generation of the last global-best improvement across runs;
+- **std** - sample standard deviation of `Cmax` across runs;
 - **mean_time_to_best_s** - mean elapsed time at which the final global-best solution was discovered;
 - **mean_execution_time_s** - mean wall-clock time required to complete the full GA run;
-- **gap_%** - percentage difference between the best observed makespan and the
-  JSPLib best-known makespan.
+- **mean_conv_gen** - mean generation of the final global-best improvement;
+- **best_gap_%** - percentage gap between the best observed makespan and the BKS;
+- **mean_gap_%** - percentage gap between the mean makespan and the BKS;
+- **bks_hit_%** - percentage of runs that reached or improved upon the BKS.
 
 ## Verification
 
