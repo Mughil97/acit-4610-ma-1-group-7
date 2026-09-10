@@ -123,15 +123,33 @@ def tournament(population, scores, k, rng):
 
 
 def crossover(parent_a, parent_b, rng):
-    """Job-based crossover: half the jobs keep their genes from parent A, the
-    remaining slots are filled with parent B's genes in its own order, so every
-    job keeps exactly the right number of genes."""
+    """Job-based crossover producing two valid offspring."""
     all_jobs = sorted(set(parent_a))
+
+    # Select approximately half of the job classes.
     kept = set(rng.sample(all_jobs, len(all_jobs) // 2))
 
-    child = [gene if gene in kept else None for gene in parent_a]
-    fill = iter([gene for gene in parent_b if gene not in kept])
-    return [gene if gene is not None else next(fill) for gene in child]
+    def make_child(position_parent, order_parent):
+        """Keep selected jobs in position_parent and fill from order_parent."""
+        child = [
+            gene if gene in kept else None
+            for gene in position_parent
+        ]
+
+        fill = iter(
+            gene for gene in order_parent
+            if gene not in kept
+        )
+
+        return [
+            gene if gene is not None else next(fill)
+            for gene in child
+        ]
+
+    child_a = make_child(parent_a, parent_b)
+    child_b = make_child(parent_b, parent_a)
+
+    return child_a, child_b
 
 
 def mutate(chromosome, rng):
@@ -182,21 +200,52 @@ def run_ga(jobs, params, rng):
         new_population = [population[i][:] for i in ranked[:elitism]]
 
         while len(new_population) < pop_size:
-            child = population[tournament(population, scores, k, rng)][:]
-            if rng.random() < params["p_crossover"]:
-                mate = population[tournament(population, scores, k, rng)]
-                child = crossover(child, mate, rng)
-            if rng.random() < params["p_mutation"]:
-                child = mutate(child, rng)
-            new_population.append(child)
 
+            # Select two parents independently by tournament selection.
+            parent_a = population[
+                tournament(population, scores, k, rng)
+            ]
+
+            parent_b = population[
+                tournament(population, scores, k, rng)
+            ]
+
+            # Apply crossover to the parent pair with probability Pc.
+            if rng.random() < params["p_crossover"]:
+                child_a, child_b = crossover(
+                    parent_a,
+                    parent_b,
+                    rng
+                )
+            else:
+                child_a = parent_a[:]
+                child_b = parent_b[:]
+
+            # Apply mutation independently to each child.
+            if rng.random() < params["p_mutation"]:
+                child_a = mutate(child_a, rng)
+
+            if rng.random() < params["p_mutation"]:
+                child_b = mutate(child_b, rng)
+
+            # Add the two offspring without exceeding population size.
+            new_population.append(child_a)
+
+            if len(new_population) < pop_size:
+                new_population.append(child_b)
+
+        # The new generation is complete.
         population = new_population
         scores = [makespan(c, jobs) for c in population]
 
+        # Update the global best if this generation found an improvement.
         best = min(range(pop_size), key=lambda i: scores[i])
+
         if scores[best] < best_score:
-            best_chromosome, best_score = population[best][:], scores[best]
+            best_chromosome = population[best][:]
+            best_score = scores[best]
             convergence_gen = generation
+
         history.append(best_score)
 
     return {

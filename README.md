@@ -27,6 +27,7 @@ done
 ## Running
 
 ```bash
+python verify_project.py           # verify chromosome validity, operators and schedule feasibility
 python main.py                     # full experiment: 6 instances x 3 parameter sets x 20 runs
 python main.py --group Small       # one size category (Small | Medium | Large)
 python main.py --runs 10           # fewer independent runs
@@ -61,15 +62,16 @@ jssp.py              instance loading, chromosome decoding (SBA), GA operators
 plots.py             Gantt chart and convergence curve
 main.py              experiment runner, writes tables and plots
 example_decode.py    worked genotype -> schedule -> Gantt example
+verify_project.py    verifies chromosome validity, GA operators and schedule feasibility
 data/                the six JSPLib instance files
 results/             generated output
 ```
 
 ## Chromosome representation
 
-An **operation-based permutation**: a list of job ids in which job `j` appears
-once for every operation it owns. The k-th occurrence of `j` denotes operation
-`k` of job `j`. For three jobs of three operations each:
+An **operation-based repeated-job sequence**: a list of job IDs in which job `j`
+appears once for every operation it owns. The k-th occurrence of `j` denotes
+operation `k` of job `j`. For three jobs of three operations each:
 
 ```
 [1, 2, 0, 0, 1, 2, 2, 0, 1]   ->   J1O0, J2O0, J0O0, J0O1, J1O1, J2O1, J2O2, J0O2, J1O2
@@ -77,23 +79,26 @@ once for every operation it owns. The k-th occurrence of `j` denotes operation
 
 Reading the list left to right always yields the operations of each job in
 their required order, so *any* permutation of this multiset is a valid
-individual. Crossover and mutation only need to preserve the number of genes
+individual as long as the required number of occurences of each job ID is preserved.
+Crossover and mutation only need to preserve the number of genes
 per job, and no repair step is ever required.
 
 ## Schedule Building Algorithm
 
-The chromosome gives an operation *order*, not times. `jssp.decode()` turns it
-into an **active schedule**:
+The chromosome gives an operation *order*, not start and finish times.
+`jssp.decode()` converts it into a feasible schedule using
+**earliest-feasible-gap insertion**.
 
 ```
 for each gene (job j) in the chromosome, left to right:
     k        <- next unscheduled operation of job j
     m, d     <- machine and duration of operation k
-    earliest <- finish time of operation k-1 of job j   (0 if k = 0)
+    earliest <- finish time of operation k-1 of job j (0 if k = 0)
     start    <- earliest time >= earliest at which machine m has an
                 idle gap of length d
     finish   <- start + d
     record (j, k, m, start, finish); mark [start, finish) busy on m
+
 makespan <- latest finish time over all operations
 ```
 
@@ -104,14 +109,14 @@ The two hard constraints are enforced structurally:
 - **machine capacity** - `start` is chosen from the idle gaps of machine `m`,
   so no two operations on a machine ever overlap.
 
-Because operations are inserted into the *earliest* idle gap rather than
-appended to the end of the machine, no operation could start earlier without
-delaying another one, i.e. the schedule is active rather than merely
-semi-active. `jssp.is_feasible()` re-checks both constraints and is asserted on
-every schedule that gets plotted.
+Because the decoder searches for the earliest feasible idle gap instead of
+automatically appending every operation to the end of the machine schedule,
+existing idle time can be used when the precedence constraint allows it.
+
+`jssp.is_feasible()` independently re-checks precedence, machine assignment,
+processing duration and machine non-overlap.
 
 ## Fitness function
-
 The fitness of a chromosome is the makespan of its decoded schedule,
 
 ```
@@ -126,11 +131,15 @@ directly (lower wins), so no fitness scaling is needed.
 | Component     | Choice                                                            |
 | ------------- | ----------------------------------------------------------------- |
 | Initialisation| random shuffles of the operation multiset                         |
-| Selection     | k-way tournament                                                  |
+| Selection     | binary tournament (`k = 2`); lower makespan wins                  |
 | Crossover     | job-based (half the jobs keep their genes from parent A, the rest are filled from parent B in its own order) |
-| Mutation      | swap two genes                                                    |
-| Elitism       | the best few individuals survive unchanged                        |
+| Mutation      | swap two positions containing different job IDs                   |
+| Elitism       | the best 2 individuals survive unchanged                          |
 | Termination   | fixed generation limit                                            |
+
+The swap mutation selects two positions containing different job IDs.
+This guarantees that a triggered mutation changes the chromosome while
+preserving its length and the required number of occurrences of every job.
 
 ## Parameter sets
 
@@ -140,14 +149,39 @@ directly (lower wins), so no fitness scaling is needed.
 | P2  | 100        | 200         | 0.85      | 0.10     | 2          | 2       |
 | P3  | 200        | 300         | 0.95      | 0.20     | 2          | 2       |
 
+Tournament size and elite count are kept fixed across P1-P3, while population
+size, generation count, crossover probability and mutation probability are varied.
+
 ## Statistical metrics
 
 The GA is stochastic, so every (instance, parameter set) pair is repeated over
-`N_RUNS = 20` independent runs with seeds `BASE_SEED + 0 … 19`, and reported as:
+`N_RUNS = 20` independent runs with seeds `BASE_SEED + 0 ... 19`.
 
-- **best** - lowest `Cmax` over the runs;
-- **worst** - highest `Cmax`, the worst-case bound;
-- **mean** and **std** - central tendency and stability;
-- **mean_time_s** - wall-clock seconds per run;
-- **mean_conv_gen** - generation at which the best value stopped improving;
-- **gap_%** - distance of the best solution from the JSPLib best-known value.
+The reported metrics are:
+
+- **best** - lowest `Cmax` observed across the runs;
+- **worst** - highest `Cmax` observed across the runs;
+- **mean** - average `Cmax` across the runs;
+- **std** - standard deviation of the run results;
+- **mean_time_s** - mean wall-clock execution time per run;
+- **mean_conv_gen** - mean generation of the last global-best improvement across runs;
+- **gap_%** - percentage difference between the best observed makespan and the
+  JSPLib best-known makespan.
+
+## Verification
+
+Run:
+
+```bash
+python verify_project.py
+```
+
+The verification script checks:
+
+- chromosome length and required job multiplicities;
+- crossover offspring validity;
+- mutation validity and whether a triggered mutation changes the chromosome;
+- completeness of decoded schedules;
+- precedence and machine-capacity constraints;
+- onsistency between the returned makespan and the latest schedule finish time;
+- a short end-to-end GA execution.

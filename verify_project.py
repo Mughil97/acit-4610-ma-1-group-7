@@ -67,20 +67,25 @@ def check_instance(instance_name):
     # 2. CROSSOVER
     # ---------------------------------------------------------
 
-    child = jssp.crossover(parent_a, parent_b, rng)
+    child_a, child_b = jssp.crossover(
+    parent_a,
+    parent_b,
+    rng
+    )
 
-    assert chromosome_is_valid(child, jobs)
+    assert chromosome_is_valid(child_a, jobs)
+    assert chromosome_is_valid(child_b, jobs)
 
     # ---------------------------------------------------------
     # 3. MUTATION
     # ---------------------------------------------------------
 
-    mutant = jssp.mutate(child, rng)
+    mutant = jssp.mutate(child_a, rng)
 
     assert chromosome_is_valid(mutant, jobs)
 
-    if len(set(child)) > 1:
-        assert mutant != child
+    if len(set(child_a)) > 1:
+        assert mutant != child_a
 
     # ---------------------------------------------------------
     # 4. DECODING / SBA - Decode chromosome into a schedule.
