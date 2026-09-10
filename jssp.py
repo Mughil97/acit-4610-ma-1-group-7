@@ -123,22 +123,31 @@ def tournament(population, scores, k, rng):
 
 
 def crossover(parent_a, parent_b, rng):
-    """Job-based crossover producing two valid offspring."""
+    """Job-Based Crossover using complementary job subsets."""
+
     all_jobs = sorted(set(parent_a))
 
-    # Select approximately half of the job classes.
-    kept = set(rng.sample(all_jobs, len(all_jobs) // 2))
+    # A meaningful partition requires at least two job classes.
+    if len(all_jobs) < 2:
+        return parent_a[:], parent_b[:]
 
-    def make_child(position_parent, order_parent):
-        """Keep selected jobs in position_parent and fill from order_parent."""
+    # Randomly partition the job classes once.
+    shuffled_jobs = all_jobs[:]
+    rng.shuffle(shuffled_jobs)
+
+    split = len(shuffled_jobs) // 2
+    job_set_a = set(shuffled_jobs[:split])
+    job_set_b = set(shuffled_jobs[split:])
+
+    def make_child(position_parent, order_parent, kept_jobs):
         child = [
-            gene if gene in kept else None
+            gene if gene in kept_jobs else None
             for gene in position_parent
         ]
 
         fill = iter(
             gene for gene in order_parent
-            if gene not in kept
+            if gene not in kept_jobs
         )
 
         return [
@@ -146,8 +155,17 @@ def crossover(parent_a, parent_b, rng):
             for gene in child
         ]
 
-    child_a = make_child(parent_a, parent_b)
-    child_b = make_child(parent_b, parent_a)
+    child_a = make_child(
+        parent_a,
+        parent_b,
+        job_set_a,
+    )
+
+    child_b = make_child(
+        parent_b,
+        parent_a,
+        job_set_b,
+    )
 
     return child_a, child_b
 

@@ -133,7 +133,7 @@ directly (lower wins), so no fitness scaling is needed.
 | ------------- | ----------------------------------------------------------------- |
 | Initialisation| random shuffles of the operation multiset                         |
 | Selection     | binary tournament (`k = 2`); lower makespan wins                  |
-| Crossover     | job-based (half the jobs keep their genes from parent A, the rest are filled from parent B in its own order) |
+| Crossover     | Job-Based Crossover (JBX): job classes are randomly partitioned into two complementary subsets; Child 1 preserves one subset from Parent A and fills from Parent B, while Child 2 preserves the complementary subset from Parent B and fills from Parent A                                        |
 | Mutation      | swap two positions containing different job IDs                   |
 | Elitism       | the best 2 individuals survive unchanged                          |
 | Termination   | fixed generation limit                                            |
