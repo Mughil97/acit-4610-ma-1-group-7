@@ -239,10 +239,19 @@ Each convergence figure shows the **mean best-so-far makespan across the indepen
 
 Each Gantt figure visualizes the best decoded schedule observed for that benchmark instance.
 
-## AI Use disclosure
 
-During the preparation of this assignment, we utilized generative AI tools, specifically Claude (by Anthropic) and ChatGPT (by OpenAI). The tools were used as aids in the following ways:  
+## AI Use Disclosure
 
-- **Understanding the Assignment**: We prompted both tools to explain key concepts and clarify the scope of the assignment requirements.
-- **Data Visualization**: We asked the tools to assist in generating Python matplotlib code to create visual charts for our data presentation.
-- **Code Optimization & Documentation**: We used the tools to assist in refactoring existing code for better performance and readability, as well as generating descriptive code comments.
+During the development of this project, generative AI tools, including ChatGPT (OpenAI) and Claude (Anthropic), were used as supporting tools for permitted coding-related activities.
+
+The tools were used for:
+
+- **Technical and coding clarification:** Clarifying programming concepts, algorithm behaviour, and implementation requirements.
+
+- **Data visualization:** Assisting with Python/Matplotlib code used to generate plots and visualise experimental results.
+
+- **Code review and refactoring:** Assisting with debugging and refactoring code for better performance, readability, and structure.
+
+All algorithmic decisions, parameter choices, experiments, outputs, and final code were reviewed and verified by the group.
+
+The final written report was produced by the group members in their own words in accordance with the assignment's AI-use requirements.
