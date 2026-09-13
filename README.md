@@ -6,7 +6,7 @@ This repository implements a Genetic Algorithm (GA) for the Job Shop Scheduling 
 
 The implementation follows the GA flow used in the course:
 
-> **Initialize → Evaluate → Select → Crossover → Mutation → Repeat**
+> **Initialise → Evaluate → Select → Crossover → Mutation → Repeat**
 
 For JSSP, evaluation first requires chromosome decoding:
 
@@ -39,7 +39,7 @@ Example for three jobs with three operations each:
 
 The first occurrence of `0` represents the first operation of Job 0, the second occurrence represents its second operation, and so on. The chromosome is the **genotype**; it stores operation-order information rather than explicit start and finish times.
 
-### 2. Initialization
+### 2. Initialisation
 
 The program builds the required repeated-job multiset and shuffles it. This creates random valid chromosomes while preserving the correct number of operations for every job.
 
@@ -47,37 +47,63 @@ The program builds the required repeated-job multiset and shuffles it. This crea
 
 `decode_chromosome()` uses an **Active Schedule Building Algorithm (SBA) with earliest-feasible-gap insertion**. The chromosome is read from left to right, and each operation is placed at the earliest valid idle time on its required machine.
 
+#### Decoding
+
 For each gene:
 
 1. identify the next unscheduled operation of the referenced job;
 2. read its required machine and processing time;
-3. determine the earliest release time from the completion of the job's preceding operation;
+3. determine the job-ready time from the completion of the job's preceding operation;
 4. inspect the occupied intervals on the required machine;
-5. place the operation into the earliest non-overlapping idle slot that begins no earlier than its release time;
+5. place the operation into the earliest non-overlapping idle slot that begins no earlier than its job-ready time;
 6. record the operation's start and finish times;
 7. continue until all operations have been scheduled.
 
-This provides the required **conflict resolution** by inserting operations into the earliest feasible machine gaps instead of simply appending them to the end of the machine schedule.
+#### Resource Allocation
 
-The decoder enforces both JSSP constraints:
+Each operation is assigned to the machine specified for that operation in the Lawrence benchmark instance.
+
+The decoder also respects the required order of operations within each job. An operation cannot start before the preceding operation of the same job has finished.
+
+The decoder therefore enforces the two main JSSP constraints:
 
 - **Precedence:** operation `k+1` of a job cannot start before operation `k` finishes.
 - **Machine capacity:** a machine can process at most one operation at a time.
 
-- `schedule_is_feasible()` independently re-checks completeness, precedence, machine assignment, processing duration, and machine non-overlap.
+#### Conflict Resolution
 
-After all operations are scheduled, the makespan is calculated as the latest job completion time:
+The implementation uses an **Active schedule-building technique with earliest-feasible-gap insertion**.
+
+Instead of simply appending an operation to the end of a machine's schedule, the decoder searches the machine's occupied intervals and inserts the operation into the earliest feasible idle gap that satisfies both machine availability and job precedence.
+
+`schedule_is_feasible()` independently re-checks schedule completeness, correct machine assignment and processing duration, job precedence, and machine non-overlap.
+
+#### Makespan Calculation
+
+After all operations are scheduled, `job_ready_time[j]` contains the completion time of the final operation of job `j`. Therefore, the job completion times are:
 
 ```text
-Cmax = max(completion time of all jobs)
+C_1, C_2, ..., C_n
 ```
+
+and the makespan is:
+``text
+Cmax = max_i(C_i)
+```
+where $C_i$ is the completion time of the final operation of job i.
+
+In the implementation, this is calculated using:
+``text
+makespan = max(job_ready_time)
+```
+The Genetic Algorithm minimises $C_{\max}$, so a smaller makespan represents a better schedule.
 
 ### 4. Objective / fitness evaluation
 
 The objective is:
 
 ```text
-minimize Cmax = max_i(C_i)
+minimise Cmax = max_i(C_i)
 ```
 
 where `C_i` is the completion time of the last operation of job `i`.
@@ -245,8 +271,7 @@ Each convergence figure shows the **mean best-so-far makespan across the indepen
 
 ### Gantt figures
 
-Each Gantt figure visualizes the best decoded schedule observed for that benchmark instance.
-
+Each Gantt figure visualises the best decoded schedule observed for that benchmark instance.
 
 ## AI Use Disclosure
 
@@ -256,7 +281,7 @@ The tools were used for:
 
 - **Technical and coding clarification:** Clarifying programming concepts, algorithm behaviour, and implementation requirements.
 
-- **Data visualization:** Assisting with Python/Matplotlib code used to generate plots and visualise experimental results.
+- **Data visualisation:** Assisting with Python/Matplotlib code used to generate plots and visualise experimental results.
 
 - **Code review and refactoring:** Assisting with debugging and refactoring code for better performance, readability, and structure.
 
