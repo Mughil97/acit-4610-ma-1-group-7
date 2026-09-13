@@ -209,7 +209,7 @@ def main():
                                 "instance": instance_name,
                                 "parameter_set": parameter_name,
                                 "run": run_number,
-                                "seed": args.base_seed + run_number - 1,
+                                "seed": config.BASE_SEED + run_number - 1,
                                 "history": history,
                             }
                         )
