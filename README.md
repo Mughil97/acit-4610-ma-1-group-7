@@ -103,11 +103,15 @@ The Genetic Algorithm minimizes $C_{\max}$, so a smaller makespan represents a b
 
 The objective is:
 
-```text
-minimise Cmax = max_i(C_i)
-```
+$$
+\min C_{\max}
+$$
 
-where `C_i` is the completion time of the last operation of job `i`.
+$$
+C_{\max} = \max_i C_i
+$$
+
+and $C_i$ is the completion time of the final operation of job $i$.
 
 The implementation compares decoded makespans directly:
 
