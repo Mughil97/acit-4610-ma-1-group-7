@@ -1,4 +1,4 @@
-"""Verification checks for parser, representation, operators and SBA feasibility."""
+"""Verify the JSSP parser, chromosome representation, operators, SBA, and GA."""
 
 from pathlib import Path
 import random
@@ -51,8 +51,9 @@ def main() -> None:
         makespan, schedule = decode_chromosome(mutant, instance)
         assert makespan > 0
         assert schedule_is_feasible(schedule, instance)
+        assert makespan == max(op.finish for op in schedule)
 
-        print(f"PASS {name}: parser/representation/operators/SBA feasible")
+        print(f"PASS {name}: parser/representation/operators/SBA schedule feasible")
 
     # Short end-to-end GA smoke test.
     instance = load_instance(DATA_DIR / "la01.txt")
@@ -68,6 +69,7 @@ def main() -> None:
     )
     assert chromosome_is_valid(result.best_chromosome, instance)
     assert schedule_is_feasible(result.best_schedule, instance)
+    assert result.best_makespan == max(op.finish for op in result.best_schedule)
     print(f"PASS end-to-end GA: la01 Cmax={result.best_makespan}")
     print("All verification checks passed.")
 
