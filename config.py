@@ -2,7 +2,7 @@
 
 The experiment uses two Lawrence instances in each required problem category.
 Only population size, generation count, crossover probability, and mutation
-probability change across P1/P2/P3. Tournament size and elitism remain fixed.
+probability change across P1/P2/P3. Tournament size and elite count remain fixed.
 """
 
 INSTANCE_GROUPS = {
@@ -11,6 +11,7 @@ INSTANCE_GROUPS = {
     "Large": ["la31", "la32"],
 }
 
+# Best-known makespans (BKS) for the selected Lawrence JSPLib instances.
 BKS = {
     "la01": 666,
     "la02": 655,
@@ -20,8 +21,7 @@ BKS = {
     "la32": 1850,
 }
 
-# Experimental parameter sets. These values are project settings rather than
-# values prescribed by the assignment.
+# GA parameter sets tested in the experiments.
 PARAMETER_SETS = {
     "P1": {
         "population_size": 50,
@@ -47,5 +47,6 @@ PARAMETER_SETS = {
 TOURNAMENT_SIZE = 2
 ELITE_SIZE = 2
 
+# Reproducibility controls.
 BASE_SEED = 4610
 DEFAULT_RUNS = 20
