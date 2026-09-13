@@ -85,15 +85,15 @@ After all operations are scheduled, `job_ready_time[j]` contains the completion 
 ```text
 C_1, C_2, ..., C_n
 ```
-
 and the makespan is:
+
 ``text
 Cmax = max_i(C_i)
 ```
 where $C_i$ is the completion time of the final operation of job i.
 
 In the implementation, this is calculated using:
-``text
+```text
 makespan = max(job_ready_time)
 ```
 The Genetic Algorithm minimises $C_{\max}$, so a smaller makespan represents a better schedule.
