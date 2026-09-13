@@ -87,7 +87,7 @@ C_1, C_2, ..., C_n
 ```
 and the makespan is:
 
-``text
+```text
 Cmax = max_i(C_i)
 ```
 where $C_i$ is the completion time of the final operation of job i.
