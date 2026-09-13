@@ -10,7 +10,7 @@ The implementation follows the GA flow used in the course:
 
 For JSSP, evaluation first requires chromosome decoding:
 
-> **operation-based genotype → Active Schedule Building Algorithm (SBA) → feasible schedule phenotype → makespan `Cmax`**
+> **operation-based genotype → Active Schedule Building Algorithm (SBA) with earliest-feasible-gap insertion → feasible schedule phenotype → makespan `Cmax`**
 
 ## Benchmark instances
 
@@ -36,6 +36,7 @@ Example for three jobs with three operations each:
 ```text
 [0, 1, 2, 0, 2, 1, 0, 1, 2]
 ```
+Job and operation indices are zero-based in the Python implementation.
 
 The first occurrence of `0` represents the first operation of Job 0, the second occurrence represents its second operation, and so on. The chromosome is the **genotype**; it stores operation-order information rather than explicit start and finish times.
 
@@ -96,7 +97,7 @@ In the implementation, this is calculated using:
 makespan = max(job_ready_time)
 ```
 
-The Genetic Algorithm minimizes $C_{\max}$, so a smaller makespan represents a better schedule.
+The Genetic Algorithm minimises $C_{\max}$, so a smaller makespan represents a better schedule.
 
 
 ### 4. Objective / fitness evaluation
@@ -127,7 +128,7 @@ Tournament selection therefore chooses the candidate with the lower makespan.
 
 ### 6. Crossover
 
-**Job-Based Crossover (JBX)** is used because the operation-sequence representation contains repeated job IDs. A subset of job classes is preserved from one parent and the remaining positions are filled in the order supplied by the other parent. Two children are produced by reversing the parent roles.
+**Job-Based Crossover (JBX)** is used because the operation-sequence representation contains repeated job IDs. For each child, half of the job classes are selected to preserve their positions from the first parent. The remaining positions are filled using the relative order of the other job classes from the second parent. The two children use reversed parent roles, and each child selects its preserved job subset independently.
 
 JBX preserves the required number of occurrences of each job, so no repair step is required.
 
@@ -141,11 +142,11 @@ The two best chromosomes are copied unchanged to the next generation. The progra
 
 ### 9. Termination
 
-Each parameter set uses a fixed generation limit. The program also records the generation of the last best-so-far improvement as the convergence-generation measure.
+Each parameter set uses a fixed generation limit. The convergence generation is the generation in which the final global-best makespan was first found and remained the best thereafter.
 
 ## Parameter sets
 
-The four parameters requested in the assignment are varied across three configurations. Tournament size and elitism are held constant.
+The four parameters requested in the assignment are varied across three configurations. Tournament size and elite count are held constant.
 
 | Set | Population | Generations | Crossover probability | Mutation probability |
 |---|---:|---:|---:|---:|
@@ -170,7 +171,7 @@ Requires Python 3.10 or newer.
 
 ```powershell
 python -m venv .venv
-.venv\Scripts\Activate.ps1
+.\.venv\Scripts\Activate.ps1
 pip install -r requirements.txt
 ```
 
@@ -186,8 +187,16 @@ pip install -r requirements.txt
 
 Run the verification script before experiments:
 
-```bash
+**Windows:**
+
+```powershell
 python verify_project.py
+```
+
+**macOS/Linux:**
+
+```bash
+python3 verify_project.py
 ```
 
 Expected message:
@@ -211,8 +220,16 @@ The verifier checks:
 
 The default experiment uses 20 independent runs for every instance × parameter-set condition:
 
-```bash
+**Windows:**
+
+```powershell
 python run_experiments.py
+```
+
+**macOS/Linux:**
+
+```bash
+python3 run_experiments.py
 ```
 
 This executes:
@@ -232,8 +249,6 @@ results/
 ├── timing_table.csv
 ├── histories.jsonl
 ├── best_chromosomes.json
-├── example_decoding_table.csv
-├── example_decoding_gantt.png
 ├── convergence/
 │   ├── la01_convergence.png
 │   └── ...
@@ -264,8 +279,8 @@ For each instance × parameter-set condition:
 - Worst observed `Cmax`;
 - Average `Cmax`;
 - Sample standard deviation;
-- BKS gap;
-- BKS hit rate;
+- best and average BKS gap;
+- BKS hit rate, defined as the percentage of runs with $C_{\max} \leq \mathrm{BKS}$;
 - average convergence generation;
 - average time to best;
 - average execution time.
