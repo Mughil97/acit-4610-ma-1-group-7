@@ -70,6 +70,7 @@ After all operations are scheduled, the makespan is calculated as the latest job
 
 ```text
 Cmax = max(completion time of all jobs)
+```
 
 ### 4. Objective / fitness evaluation
 
