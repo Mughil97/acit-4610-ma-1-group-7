@@ -1,4 +1,4 @@
-"""Plotting helpers for Gantt and convergence figures."""
+"""Plotting helpers for decoded schedules and mean convergence figures."""
 
 from pathlib import Path
 from statistics import mean
@@ -10,7 +10,7 @@ import matplotlib.pyplot as plt
 
 
 def plot_gantt(schedule, n_machines, title, output):
-    """Plot one horizontal row per machine and one bar per operation."""
+    """Plot a decoded schedule with one row per machine and one bar per operation."""
 
     output = Path(output)
     output.parent.mkdir(parents=True, exist_ok=True)
@@ -53,7 +53,11 @@ def plot_mean_convergence(
     title,
     output,
 ):
-    """Plot mean best-so-far Cmax across repeated runs for each parameter set."""
+    """Plot mean best-so-far Cmax by generation across repeated runs.
+
+    Each curve is the arithmetic mean of the best-so-far makespan at each
+    generation for one parameter set. The BKS is shown as a reference line.
+    """
 
     output = Path(output)
     output.parent.mkdir(parents=True, exist_ok=True)
