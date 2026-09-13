@@ -4,11 +4,12 @@ from pathlib import Path
 from statistics import mean
 
 import matplotlib
+
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 
 
-def plot_gantt(schedule, n_machines: int, title: str, output: str | Path) -> None:
+def plot_gantt(schedule, n_machines, title, output):
     """Plot one horizontal row per machine and one bar per operation."""
 
     output = Path(output)
@@ -47,11 +48,11 @@ def plot_gantt(schedule, n_machines: int, title: str, output: str | Path) -> Non
 
 
 def plot_mean_convergence(
-    histories_by_parameter: dict[str, list[list[int]]],
-    bks: int,
-    title: str,
-    output: str | Path,
-) -> None:
+    histories_by_parameter,
+    bks,
+    title,
+    output,
+):
     """Plot mean best-so-far Cmax across repeated runs for each parameter set."""
 
     output = Path(output)

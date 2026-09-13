@@ -23,7 +23,6 @@ Active schedule-building approach and structurally enforces precedence and
 machine-capacity constraints.
 """
 
-from __future__ import annotations
 
 from dataclasses import dataclass
 from pathlib import Path
@@ -34,7 +33,8 @@ from typing import Iterable
 
 @dataclass(frozen=True)
 class JSSPInstance:
-    """Parsed JSSP instance.
+    """
+    Parsed JSSP instance.
 
     jobs[j][k] = (machine_id, processing_time) for operation k of job j.
     """
@@ -161,7 +161,8 @@ def chromosome_is_valid(chromosome: Iterable[int], instance: JSSPInstance) -> bo
 def _earliest_machine_gap(
     intervals: list[tuple[int, int]], job_ready_time: int, duration: int
 ) -> int:
-    """Return the earliest start >= job_ready_time that does not overlap.
+    """
+    Return the earliest start >= job_ready_time that does not overlap.
 
     intervals must be sorted by start time. If no internal gap is large enough,
     the operation is appended after the last conflicting interval.
@@ -180,7 +181,8 @@ def _earliest_machine_gap(
 def decode_chromosome(
     chromosome: list[int], instance: JSSPInstance, *, validate: bool = True
 ) -> tuple[int, list[ScheduledOperation]]:
-    """Decode genotype into an Active feasible schedule and return (Cmax, schedule).
+    """
+    Decode genotype into an Active feasible schedule and return (Cmax, schedule).
 
     Precedence:
         The k-th occurrence of a job schedules only operation k, and the start
@@ -289,7 +291,8 @@ def tournament_selection(
 def _job_based_child(
     parent_a: list[int], parent_b: list[int], rng: Random
 ) -> list[int]:
-    """Create one Job-Based Crossover (JBX) child.
+    """
+    Create one Job-Based Crossover (JBX) child.
 
     Half of the job classes preserve their positions from parent A. Empty
     positions are filled using the relative order of all other job classes from
@@ -315,7 +318,8 @@ def _job_based_child(
 def job_based_crossover(
     parent_a: list[int], parent_b: list[int], rng: Random
 ) -> tuple[list[int], list[int]]:
-    """Return two valid JBX children from two parents.
+    """
+    Return two valid JBX children from two parents.
 
     Each child independently selects a subset of job classes to preserve from
     its first parent, then fills remaining positions from the other parent.
@@ -327,7 +331,8 @@ def job_based_crossover(
 
 
 def swap_mutation(chromosome: list[int], rng: Random) -> list[int]:
-    """Swap two positions containing different job IDs.
+    """
+    Swap two positions containing different job IDs.
 
     This preserves job multiplicities and guarantees that a triggered mutation
     actually changes the genotype.
@@ -356,7 +361,8 @@ def genetic_algorithm(
     elite_size: int,
     seed: int,
 ) -> GARunResult:
-    """Run one independent GA experiment.
+    """
+    Run one independent GA experiment.
 
     Flow:
         1. Initialize population.

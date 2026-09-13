@@ -168,43 +168,12 @@ The verifier checks:
 - machine non-overlap;
 - a short end-to-end GA run.
 
-## Chromosome-decoding example
-
-Run:
-
-```bash
-python example_decode.py
-```
-
-The illustrative genotype is:
-
-```text
-[0, 1, 2, 0, 2, 1, 0, 1, 2]
-```
-
-The script prints the decoded operation table and generates:
-
-```text
-results/example_decoding_table.csv
-results/example_decoding_gantt.png
-```
-
-The illustrated schedule has `Cmax = 12` and is verified as feasible.
-
-## Smoke test
-
-```bash
-python run_experiments.py --quick
-```
-
-`--quick` is only an execution check and should not be used as statistical evidence. Quick-test outputs are written to `results/quick/` so the main experiment evidence is not overwritten.
-
 ## Main experiment
 
 The default experiment uses 20 independent runs for every instance × parameter-set condition:
 
 ```bash
-python run_experiments.py --runs 20
+python run_experiments.py
 ```
 
 This executes:
@@ -270,42 +239,10 @@ Each convergence figure shows the **mean best-so-far makespan across the indepen
 
 Each Gantt figure visualizes the best decoded schedule observed for that benchmark instance.
 
-## Repository structure
+## AI Use disclosure
 
-```text
-ACIT4610_Group7_JSSP/
-├── README.md
-├── config.py
-├── run_experiments.py
-├── example_decode.py
-├── verify_project.py
-├── plots.py
-├── requirements.txt
-├── data/
-├── src/
-│   ├── __init__.py
-│   └── jssp_ga.py
-├── results/
-└── docs/
-    ├── ASSIGNMENT_REQUIREMENTS_CHECKLIST.md
-    ├── CODE_EXPLANATION.md
-    ├── REFERENCES.md
-    ├── REPORT_EVIDENCE_MAP.md
-    ├── RESULTS_TABLES.md
-    └── SOURCE_ALIGNMENT.md
-```
+During the preparation of this assignment, we utilized generative AI tools, specifically Claude (by Anthropic) and ChatGPT (by OpenAI). The tools were used as aids in the following ways:  
 
-## Report evidence
-
-The repository contains evidence for all required report sections:
-
-1. complete GA design;
-2. decoder/SBA explanation and constraints;
-3. objective/fitness definition;
-4. genotype-to-schedule example;
-5. Small/Medium/Large comparison;
-6. time-to-solution table;
-7. parameter-set analysis;
-8. early- and later-stage convergence analysis.
-
-See `docs/REPORT_EVIDENCE_MAP.md` for the location of each item.
+- **Understanding the Assignment**: We prompted both tools to explain key concepts and clarify the scope of the assignment requirements.
+- **Data Visualization**: We asked the tools to assist in generating Python matplotlib code to create visual charts for our data presentation.
+- **Code Optimization & Documentation**: We used the tools to assist in refactoring existing code for better performance and readability, as well as generating descriptive code comments.

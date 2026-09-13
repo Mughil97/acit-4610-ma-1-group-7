@@ -1,7 +1,0 @@
-instance,category,BKS,P1_avg_time_to_best_s,P1_avg_execution_time_s,P2_avg_time_to_best_s,P2_avg_execution_time_s,P3_avg_time_to_best_s,P3_avg_execution_time_s
-la01,Small,666,0.0731,0.2329,0.0853,0.9644,0.1351,3.0393
-la02,Small,655,0.0757,0.2387,0.3824,0.9755,0.8995,2.9994
-la16,Medium,945,0.0953,0.4661,0.2803,1.9208,1.4423,5.8164
-la17,Medium,784,0.2498,0.4641,0.6368,1.9578,2.0912,5.7784
-la31,Large,1784,1.3315,2.3056,3.8692,9.0371,6.0017,27.5479
-la32,Large,1850,1.4081,2.2788,5.9259,9.3492,10.851,27.2263

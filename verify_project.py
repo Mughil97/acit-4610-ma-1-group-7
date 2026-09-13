@@ -4,7 +4,7 @@ from pathlib import Path
 import random
 
 import config
-from src.jssp_ga import (
+from jssp_ga import (
     chromosome_is_valid,
     create_individual,
     decode_chromosome,
