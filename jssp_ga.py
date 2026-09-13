@@ -1,11 +1,12 @@
 """Core Genetic Algorithm for the Job Shop Scheduling Problem (JSSP).
 
 Course-aligned structure:
-    Initialize -> Evaluate -> Select -> Crossover -> Mutation -> Repeat
+    Initialise -> Evaluate -> Select -> Crossover -> Mutation -> Repeat
 
 JSSP-specific evaluation:
     operation-sequence genotype -> Active Schedule Building Algorithm (SBA)
-    -> feasible schedule phenotype -> makespan Cmax
+    with earliest-feasible-gap insertion -> feasible schedule phenotype
+    -> makespan Cmax
 
 Representation
 --------------
@@ -18,9 +19,9 @@ Decoder / SBA
 -------------
 The decoder scans the chromosome from left to right. Each next operation is
 inserted into the earliest idle interval of its required machine that starts no
-earlier than the finish of the preceding operation of the same job. This is an
-Active schedule-building approach and structurally enforces precedence and
-machine-capacity constraints.
+earlier than the finish of the preceding operation of the same job.
+This Active schedule-building approach uses earliest-feasible-gap insertion
+and structurally enforces precedence and machine-capacity constraints.
 """
 
 
@@ -182,7 +183,8 @@ def decode_chromosome(
     chromosome: list[int], instance: JSSPInstance, *, validate: bool = True
 ) -> tuple[int, list[ScheduledOperation]]:
     """
-    Decode genotype into an Active feasible schedule and return (Cmax, schedule).
+    Decode genotype into a feasible active schedule using
+    earliest-feasible-gap insertion and return (Cmax, schedule).
 
     Precedence:
         The k-th occurrence of a job schedules only operation k, and the start
@@ -225,6 +227,8 @@ def decode_chromosome(
         next_operation[job] += 1
         job_ready_time[job] = finish
 
+    # After decoding, each job_ready_time stores the final completion time C_i
+    # of one job. The makespan Cmax is the maximum of these completion times.
     makespan = max(job_ready_time)
     return makespan, schedule
 
@@ -279,7 +283,7 @@ def evaluate(chromosome: list[int], instance: JSSPInstance) -> int:
 def tournament_selection(
     population: list[list[int]], scores: list[int], rng: Random, k: int = 2
 ) -> list[int]:
-    """Binary/k-way tournament selection for minimization (smaller Cmax wins)."""
+    """Binary/k-way tournament selection for minimisation (smaller Cmax wins)."""
 
     if k < 2 or k > len(population):
         raise ValueError("Tournament size must satisfy 2 <= k <= population size")
@@ -365,7 +369,7 @@ def genetic_algorithm(
     Run one independent GA experiment.
 
     Flow:
-        1. Initialize population.
+        1. Initialise population.
         2. Evaluate Cmax.
         3. Copy elite survivors.
         4. Select two parents by tournament.
