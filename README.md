@@ -45,24 +45,31 @@ The program builds the required repeated-job multiset and shuffles it. This crea
 
 ### 3. Schedule Building Algorithm (SBA)
 
-`decode_chromosome()` constructs an **Active schedule** by reading the chromosome from left to right.
+`decode_chromosome()` uses an **Active Schedule Building Algorithm (SBA) with earliest-feasible-gap insertion**. The chromosome is read from left to right, and each operation is placed at the earliest valid idle time on its required machine.
 
 For each gene:
 
-1. identify that job's next unscheduled operation;
+1. identify the next unscheduled operation of the referenced job;
 2. read its required machine and processing time;
-3. obtain the earliest release time from the completion of the preceding operation of the same job;
+3. determine the earliest release time from the completion of the job's preceding operation;
 4. inspect the occupied intervals on the required machine;
 5. place the operation into the earliest non-overlapping idle slot that begins no earlier than its release time;
-6. record start and finish times;
-7. continue until all operations are scheduled.
+6. record the operation's start and finish times;
+7. continue until all operations have been scheduled.
+
+This provides the required **conflict resolution** by inserting operations into the earliest feasible machine gaps instead of simply appending them to the end of the machine schedule.
 
 The decoder enforces both JSSP constraints:
 
-- **precedence:** operation `k+1` cannot start before operation `k` finishes;
-- **machine capacity:** a machine processes at most one operation at a time.
+- **Precedence:** operation `k+1` of a job cannot start before operation `k` finishes.
+- **Machine capacity:** a machine can process at most one operation at a time.
 
-`schedule_is_feasible()` independently re-checks completeness, precedence, machine assignment, processing duration, and machine non-overlap.
+- `schedule_is_feasible()` independently re-checks completeness, precedence, machine assignment, processing duration, and machine non-overlap.
+
+After all operations are scheduled, the makespan is calculated as the latest job completion time:
+
+```text
+Cmax = max(completion time of all jobs)
 
 ### 4. Objective / fitness evaluation
 
