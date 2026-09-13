@@ -12,6 +12,21 @@ Generated evidence:
     results/convergence/*.png
     results/gantt/*.png
 
+Metrics:
+    Best Cmax: lowest makespan found across the independent runs.
+    Worst Cmax: highest makespan found across the independent runs.
+    Average Cmax: mean makespan across the independent runs.
+    Sample SD: sample standard deviation of makespan across the runs.
+    BKS hit rate: percentage of runs reaching or improving on the stored BKS.
+
+Convergence:
+    The convergence generation is the generation in which the final
+    global-best makespan was first found and remained the best thereafter.
+
+Timing:
+    time_to_best_seconds records when the final best solution was first found.
+    execution_time_seconds records the total duration of the complete GA run.
+
 For execution-time comparisons, use the same computer/environment for all
 runs and avoid heavy background workloads.
 """
@@ -42,7 +57,7 @@ def gap_percent(value: float, bks: float) -> float:
 
 
 def summarize(raw_df: pd.DataFrame) -> pd.DataFrame:
-    """Calculate the mandatory repeated-run statistics per condition."""
+    """Calculate repeated-run quality, convergence, and timing statistics."""
 
     rows = []
     grouping = ["instance", "category", "parameter_set", "BKS"]
@@ -68,6 +83,8 @@ def summarize(raw_df: pd.DataFrame) -> pd.DataFrame:
                 "sample_std_Cmax": round(std, 3),
                 "best_gap_percent": round(gap_percent(best, bks), 3),
                 "average_gap_percent": round(gap_percent(average, bks), 3),
+
+                # Percentage of independent runs that reach or improve on the stored BKS.
                 "BKS_hit_rate_percent": round(100.0 * float((values <= bks).mean()), 2),
                 "average_convergence_generation": round(
                     float(group["convergence_generation"].mean()), 2
@@ -113,7 +130,7 @@ def build_timing_table(summary_df: pd.DataFrame) -> pd.DataFrame:
 
 def main():
     """
-    Runs the experiment and generates reports.
+    Run the complete experiment and generate all result evidence files.
     """
     all_instances = [
         name for names in config.INSTANCE_GROUPS.values() for name in names
@@ -144,6 +161,7 @@ def main():
             params = dict(original_params)
 
             for run_number in range(1, run_count + 1):
+                # Use the same deterministic run seeds for every experimental condition.
                 seed = config.BASE_SEED + run_number - 1
                 result = genetic_algorithm(
                     instance,
