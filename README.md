@@ -80,23 +80,24 @@ Instead of simply appending an operation to the end of a machine's schedule, the
 
 #### Makespan Calculation
 
-After all operations are scheduled, `job_ready_time[j]` contains the completion time of the final operation of job `j`. Therefore, the job completion times are:
+After all operations are scheduled, `job_ready_time[j]` contains the completion time of the final operation of job `j`. This corresponds to the job completion time $C_i$.
 
-```text
-C_1, C_2, ..., C_n
-```
-and the makespan is:
+The makespan is therefore:
 
-```text
-Cmax = max_i(C_i)
-```
-where $C_i$ is the completion time of the final operation of job i.
+$$
+C_{\max} = \max_i C_i
+$$
+
+where $C_i$ is the completion time of the final operation of job $i$.
 
 In the implementation, this is calculated using:
-```text
+
+```python
 makespan = max(job_ready_time)
 ```
-The Genetic Algorithm minimises $C_{\max}$, so a smaller makespan represents a better schedule.
+
+The Genetic Algorithm minimizes $C_{\max}$, so a smaller makespan represents a better schedule.
+
 
 ### 4. Objective / fitness evaluation
 
