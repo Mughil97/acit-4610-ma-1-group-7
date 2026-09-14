@@ -1,10 +1,13 @@
-"""Experiment configuration for the ACIT4610 Group 7 JSSP project.
+#Configuration for the JSSP project
 
-The experiment uses two Lawrence instances in each required problem category.
-Only population size, generation count, crossover probability, and mutation
-probability change across P1/P2/P3. Tournament size and elite count remain fixed.
-"""
+"""We have three groups of scenarios (small, medium, large), 
+each with two instances from the Lawrence family within the GitHub-folder
+provided in the assignment.
 
+Tournament size and elitism have fixed values, while the remaining 
+parameters changes across the parameter sets."""
+
+#our three groups of scenarios
 INSTANCE_GROUPS = {
     "Small": ["la01", "la02"],
     "Medium": ["la16", "la17"],
@@ -21,7 +24,7 @@ BKS = {
     "la32": 1850,
 }
 
-# GA parameter sets tested in the experiments.
+#setting parameters
 PARAMETER_SETS = {
     "P1": {
         "population_size": 50,
@@ -43,7 +46,7 @@ PARAMETER_SETS = {
     },
 }
 
-# Fixed GA controls.
+#fized values
 TOURNAMENT_SIZE = 2
 ELITE_SIZE = 2
 
