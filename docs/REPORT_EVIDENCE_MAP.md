@@ -8,7 +8,7 @@ Use:
 
 ```text
 README.md
-src/jssp_ga.py
+jssp_ga.py
 docs/CODE_EXPLANATION.md
 ```
 
@@ -16,7 +16,7 @@ Implementation elements to describe:
 
 ```text
 representation
-initialization
+initialisation
 selection
 crossover
 mutation
@@ -30,9 +30,9 @@ Schedule Building Algorithm
 Relevant code:
 
 ```text
-src/jssp_ga.py -> decode_chromosome()
-src/jssp_ga.py -> _earliest_machine_gap()
-src/jssp_ga.py -> schedule_is_feasible()
+jssp_ga.py -> decode_chromosome()
+jssp_ga.py -> _earliest_machine_gap()
+jssp_ga.py -> schedule_is_feasible()
 ```
 
 Core decoder flow:
@@ -64,25 +64,26 @@ Evidence:
 
 ```text
 Cmax = max_i(C_i)
-minimize Cmax
+minimise Cmax
 ```
 
 The implementation compares decoded makespans directly; lower values win tournament selection.
 
 ## 4. Chromosome-decoding example
 
-Run:
+The reduced genotype-to-schedule example is documented in the final report and is consistent with the chromosome representation described in `README.md` and the decoder implemented in `jssp_ga.py`.
 
-```bash
-python example_decode.py
-```
-
-Evidence:
+Example genotype:
 
 ```text
-genotype: [0,1,2,0,2,1,0,1,2]
-results/example_decoding_table.csv
-results/example_decoding_gantt.png
+[0,1,2,0,2,1,0,1,2]
+```
+
+The r-th occurrence of a job ID represents that job's r-th operation. The decoder converts the genotype into machine assignments and start/finish times while enforcing precedence and machine-capacity constraints.
+
+For the reduced example used in the report:
+
+```text
 Cmax = 12
 ```
 
@@ -170,7 +171,8 @@ early stage  -> steeper improvement, more readily available gains
 later stage  -> flatter best-so-far curve, fewer improvements, possible convergence
 ```
 
-Fast stabilization does not automatically imply a strong solution. Compare both the speed of flattening and the makespan value where the curve stabilizes.
+Fast stabilisation does not automatically imply a strong solution. Compare both the speed of flattening and the makespan value where the curve stabilises.
+
 
 ## Numerical evidence
 
