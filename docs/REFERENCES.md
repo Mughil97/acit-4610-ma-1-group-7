@@ -12,7 +12,7 @@ https://github.com/ScheduleOpt/benchmarks/tree/main/jobshop/instances/text/Lawre
 
 ## Course materials
 
-Use the ACIT4610 lecture slides ans lab slides/code as the primary course sources for:
+Use the ACIT4610 lecture slides and lab slides/code as the primary course sources for:
 
 - GA lifecycle;
 - genotype and phenotype;
