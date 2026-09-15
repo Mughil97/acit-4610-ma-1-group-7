@@ -160,7 +160,7 @@ Fixed controls:
 
 ```text
 tournament size = 2
-elite size      = 2
+elite count      = 2
 ```
 
 ## Installation
