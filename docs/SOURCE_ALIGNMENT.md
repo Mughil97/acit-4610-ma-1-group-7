@@ -4,12 +4,12 @@ This note separates course/assignment requirements from settings selected for th
 
 ## Course and assignment principles used directly
 
-- GA lifecycle: **Initialize → Evaluate → Select → Crossover → Mutation → Repeat**.
+- GA lifecycle: **Initialise → Evaluate → Select → Crossover → Mutation → Repeat**.
 - Genotype and phenotype are distinct representations.
 - A JSSP chromosome stores ordering information and must be decoded before objective evaluation.
 - The Schedule Building Algorithm must enforce job precedence and machine capacity.
 - The assignment permits an Active schedule builder using earliest valid idle slots.
-- Objective: minimize makespan `Cmax`.
+- Objective: minimise makespan `Cmax`.
 - Tournament selection is stochastic; the course/lab example uses two candidates.
 - Swap mutation is compatible with order/permutation-style representations.
 - Multiple independent runs are required because GA behavior is stochastic.
@@ -40,7 +40,7 @@ Reasoning:
 - JBX preserves the required occurrence count of every job;
 - no repair step is required after crossover.
 
-## Direct makespan minimization
+## Direct makespan minimisation
 
 Tournament selection compares decoded makespans directly:
 
