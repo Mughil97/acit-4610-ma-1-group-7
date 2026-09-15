@@ -2,7 +2,7 @@
 
 This document explains the implementation structure and the reasoning behind each major function.
 
-## `src/jssp_ga.py`
+## `jssp_ga.py`
 
 ### `JSSPInstance`
 
@@ -133,11 +133,11 @@ The parent chromosomes contain repeated job IDs.
 
 For one child:
 
-1. select a subset of job classes;
+1. select half of the job classes to preserve;
 2. preserve the positions of those jobs from the first parent;
-3. fill the empty positions using the order of the remaining jobs from the second parent.
+3. fill the empty positions using the relative order of the remaining job classes from the second parent.
 
-Two children are produced by reversing parent roles. The operator preserves chromosome length and job multiplicities.
+Two children are produced using reversed parent roles. Each child independently selects its preserved subset of job classes. The operator preserves chromosome length and job multiplicities, so no repair step is required.
 
 ## Swap mutation
 
@@ -146,7 +146,7 @@ Two positions containing **different job IDs** are exchanged. This changes seque
 ## Main GA loop
 
 ```text
-INITIALIZE population
+INITIALISE population
 EVALUATE population
 FOR each generation:
     copy the top two elites
@@ -168,7 +168,7 @@ The best solution observed anywhere during one run.
 
 ### Convergence generation
 
-The generation of the **last improvement in the best-so-far makespan**. After that point, no later generation found a smaller value.
+The generation in which the final global-best makespan was first found and remained the best thereafter.
 
 ### Time to best
 
@@ -200,14 +200,27 @@ mean convergence plots
 best Gantt charts
 ```
 
-## `example_decode.py`
+## Reduced decoding example
 
-Uses a reduced 3×3 instance to show:
+The final report contains a reduced 3×3 genotype-to-schedule example using:
 
 ```text
-genotype → operation order → machine assignment → start/finish times → Cmax → Gantt chart
+[0,1,2,0,2,1,0,1,2]
+``
+The example demonstrates:
+
+```text
+genotype → operation order → machine assignment → start/finish times → Cmax
 ```
+
+The resulting feasible schedule has:
+```text
+Cmax = 12
+```
+
+The same decoding principles are implemented by `decode_chromosome()´ in ´`jssp_ga.py.
 
 ## `verify_project.py`
 
-Checks dataset loading, chromosome validity, JBX validity, mutation validity, decoder feasibility, and a short end-to-end GA run.
+Checks dataset loading, chromosome validity, JBX validity, mutation validity, decoder feasibility, makespan consistency, and a short end-to-end GA run.
+
