@@ -21,13 +21,12 @@ These exact values are implementation settings rather than prescribed values:
 
 ```text
 Tournament size = 2
-Elite size = 2
+Elite count = 2
 P1/P2/P3 parameter values
 20 runs per condition
 BASE_SEED = 4610
 ```
-
-Tournament size and elitism are held constant across P1/P2/P3 so the three configurations differ only in the four parameters requested for comparison: population size, generation count, crossover probability, and mutation probability.
+Tournament size and elite count are held constant across P1/P2/P3 so the three configurations differ only in the four parameters requested for comparison: population size, generation count, crossover probability, and mutation probability.
 
 ## Job-Based Crossover (JBX)
 
