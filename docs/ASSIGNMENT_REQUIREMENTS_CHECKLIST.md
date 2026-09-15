@@ -20,7 +20,7 @@
 
 ## GA design
 
-- [x] Random initialization.
+- [x] Random initialisation.
 - [x] Tournament parent selection.
 - [x] JBX crossover compatible with repeated job IDs.
 - [x] Swap mutation.
@@ -36,7 +36,7 @@
 - [x] Crossover probability varied.
 - [x] Mutation probability varied.
 - [x] Tournament size held constant at 2.
-- [x] Elite size held constant at 2.
+- [x] Elite count held constant at 2.
 
 ## Statistical performance metrics
 
@@ -85,9 +85,8 @@
 ## Before submission
 
 - [ ] Run `python verify_project.py` from a clean environment.
-- [ ] Run `python run_experiments.py --quick` as an execution check; outputs are written to `results/quick/`.
-- [ ] Run the 20-run experiment on the computer used for timing claims if timing values will be reported from that machine.
+- [ ] Confirm the committed results contain 20 runs per instance × parameter-set condition.
 - [ ] Confirm the GitHub repository is accessible using the submitted link.
 - [ ] Confirm the PDF report is 1000–1500 words.
 - [ ] Confirm the report states Group 7.
-- [ ] Confirm every numerical report claim matches the generated CSV evidence.
+- [ ] Confirm every numerical report claim matches the committed CSV evidence.
