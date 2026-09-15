@@ -12,6 +12,39 @@ For JSSP, evaluation first requires chromosome decoding:
 
 > **operation-based genotype → Active Schedule Building Algorithm (SBA) with earliest-feasible-gap insertion → feasible schedule phenotype → makespan `Cmax`**
 
+## Table of Contents
+
+- [Project Documentation](#project-documentation)
+- [Benchmark instances](#benchmark-instances)
+- [GA design](#ga-design)
+  - [1. Chromosome representation](#1-chromosome-representation)
+  - [2. Initialisation](#2-initialisation)
+  - [3. Schedule Building Algorithm (SBA)](#3-schedule-building-algorithm-sba)
+  - [4. Objective / fitness evaluation](#4-objective--fitness-evaluation)
+  - [5. Parent selection](#5-parent-selection)
+  - [6. Crossover](#6-crossover)
+  - [7. Mutation](#7-mutation)
+  - [8. Elitism and best-so-far tracking](#8-elitism-and-best-so-far-tracking)
+  - [9. Termination](#9-termination)
+- [Parameter sets](#parameter-sets)
+- [Installation](#installation)
+- [Verification](#verification)
+- [Main experiment](#main-experiment)
+- [Summary of Results](#summary-of-results)
+- [Generated outputs](#generated-outputs)
+- [AI Use Disclosure](#ai-use-disclosure)
+
+## Project Documentation
+
+Detailed project documentation and report evidence can be found in the [`docs/`](docs/) directory:
+
+- [`ASSIGNMENT_REQUIREMENTS_CHECKLIST.md`](docs/ASSIGNMENT_REQUIREMENTS_CHECKLIST.md)
+- [`CODE_EXPLANATION.md`](docs/CODE_EXPLANATION.md)
+- [`REFERENCES.md`](docs/REFERENCES.md)
+- [`REPORT_EVIDENCE_MAP.md`](docs/REPORT_EVIDENCE_MAP.md)
+- [`RESULTS_TABLES.md`](docs/RESULTS_TABLES.md)
+- [`SOURCE_ALIGNMENT.md`](docs/SOURCE_ALIGNMENT.md)
+
 ## Benchmark instances
 
 | Category | Instances | Size | JSPLib BKS |
@@ -26,6 +59,22 @@ Dataset source: JSPLib, Lawrence1984 family.
 - https://github.com/ScheduleOpt/benchmarks/tree/main/jobshop/instances/text/Lawrence1984
 
 ## GA design
+
+The Genetic Algorithm follows a continuous evolutionary loop:
+
+```mermaid
+flowchart TD
+    Init[Initialise Population] --> Eval[Evaluate Cmax]
+    Eval --> Term{Termination Limit?}
+    Term -- Yes --> End[Return Best Schedule]
+    Term -- No --> Elitism[Copy Elite Survivors]
+    Term -- No --> Select[Tournament Selection]
+    Elitism --> NextGen[Next Generation]
+    Select --> Crossover[Job-Based Crossover]
+    Crossover --> Mutation[Swap Mutation]
+    Mutation --> NextGen
+    NextGen --> Eval
+```
 
 ### 1. Chromosome representation
 
@@ -47,6 +96,16 @@ The program builds the required repeated-job multiset and shuffles it. This crea
 ### 3. Schedule Building Algorithm (SBA)
 
 `decode_chromosome()` uses an **Active Schedule Building Algorithm (SBA) with earliest-feasible-gap insertion**. The chromosome is read from left to right, and each operation is placed at the earliest valid idle time on its required machine.
+
+```mermaid
+flowchart TD
+    Gene[Read next gene from chromosome] --> Op[Identify next unscheduled operation of job]
+    Op --> Machine[Read required machine & processing time]
+    Machine --> Time[Determine job-ready time from previous operation]
+    Time --> Gap[Find earliest non-overlapping idle gap on machine]
+    Gap --> Insert[Insert operation & record start/finish times]
+    Insert --> Gene
+```
 
 #### Decoding
 
@@ -240,6 +299,42 @@ This executes:
 
 The assignment permits 10–30 independent runs. For timing comparisons, run all configurations on the same computer under comparable load.
 
+## Summary of Results
+
+### Required performance statistics
+
+| instance   | category   | parameter_set   |   BKS |   best_Cmax |   worst_Cmax |   average_Cmax |   sample_std_Cmax |   BKS_hit_rate_percent |   average_convergence_generation |
+|:-----------|:-----------|:----------------|------:|------------:|-------------:|---------------:|------------------:|-----------------------:|---------------------------------:|
+| la01       | Small      | P1              |   666 |         666 |          706 |         674.60 |            11.486 |                     45 |                            30.30 |
+| la01       | Small      | P2              |   666 |         666 |          678 |         666.60 |             2.683 |                     95 |                            16.55 |
+| la01       | Small      | P3              |   666 |         666 |          666 |         666.00 |             0.000 |                    100 |                            12.25 |
+| la02       | Small      | P1              |   655 |         671 |          741 |         697.45 |            17.337 |                      0 |                            30.75 |
+| la02       | Small      | P2              |   655 |         655 |          687 |         667.95 |             8.338 |                     10 |                            77.35 |
+| la02       | Small      | P3              |   655 |         655 |          672 |         660.95 |             4.454 |                     15 |                            89.60 |
+| la16       | Medium     | P1              |   945 |         979 |         1008 |         988.20 |             8.612 |                      0 |                            19.40 |
+| la16       | Medium     | P2              |   945 |         945 |          982 |         978.95 |             8.127 |                      5 |                            28.35 |
+| la16       | Medium     | P3              |   945 |         954 |          982 |         977.25 |             6.735 |                      0 |                            74.00 |
+| la17       | Medium     | P1              |   784 |         784 |          864 |         813.00 |            17.269 |                      5 |                            53.25 |
+| la17       | Medium     | P2              |   784 |         784 |          804 |         793.00 |             6.806 |                     20 |                            62.85 |
+| la17       | Medium     | P3              |   784 |         784 |          804 |         790.50 |             7.851 |                     45 |                           107.95 |
+| la31       | Large      | P1              |  1784 |        1786 |         1866 |        1822.90 |            17.973 |                      0 |                            57.65 |
+| la31       | Large      | P2              |  1784 |        1784 |         1784 |        1784.00 |             0.000 |                    100 |                            84.55 |
+| la31       | Large      | P3              |  1784 |        1784 |         1784 |        1784.00 |             0.000 |                    100 |                            64.20 |
+| la32       | Large      | P1              |  1850 |        1880 |         1941 |        1912.40 |            17.689 |                      0 |                            60.60 |
+| la32       | Large      | P2              |  1850 |        1850 |         1868 |        1851.10 |             4.077 |                     90 |                           126.30 |
+| la32       | Large      | P3              |  1850 |        1850 |         1850 |        1850.00 |             0.000 |                    100 |                           118.75 |
+
+### Time-to-solution and total execution time
+
+| instance   | category   |   BKS |   P1_avg_time_to_best_s |   P1_avg_execution_time_s |   P2_avg_time_to_best_s |   P2_avg_execution_time_s |   P3_avg_time_to_best_s |   P3_avg_execution_time_s |
+|:-----------|:-----------|------:|------------------------:|--------------------------:|------------------------:|--------------------------:|------------------------:|--------------------------:|
+| la01       | Small      |   666 |                  0.0455 |                    0.1468 |                  0.0528 |                    0.5970 |                  0.0808 |                    1.8320 |
+| la02       | Small      |   655 |                  0.0458 |                    0.1445 |                  0.2320 |                    0.5931 |                  0.5487 |                    1.8186 |
+| la16       | Medium     |   945 |                  0.0579 |                    0.2837 |                  0.1696 |                    1.1589 |                  0.8811 |                    3.5348 |
+| la17       | Medium     |   784 |                  0.1532 |                    0.2849 |                  0.3686 |                    1.1566 |                  1.2876 |                    3.5472 |
+| la31       | Large      |  1784 |                  0.7054 |                    1.2154 |                  2.1129 |                    4.9534 |                  3.2482 |                   14.9430 |
+| la32       | Large      |  1850 |                  0.7510 |                    1.2308 |                  3.1565 |                    4.9840 |                  5.9909 |                   15.0263 |
+
 ## Generated outputs
 
 ```text
@@ -289,9 +384,21 @@ For each instance × parameter-set condition:
 
 Each convergence figure shows the **mean best-so-far makespan across the independent runs** for P1, P2, and P3, together with the JSPLib BKS reference line.
 
+*Example: Convergence for `la16` (Medium)*  
+![la16 Convergence](results/convergence/la16_convergence.png)
+
+*Example: Convergence for `la31` (Large)*  
+![la31 Convergence](results/convergence/la31_convergence.png)
+
 ### Gantt figures
 
 Each Gantt figure visualises the best decoded schedule observed for that benchmark instance.
+
+*Example: Best schedule for `la01` (Small)*  
+![la01 Best Gantt](results/gantt/la01_best_gantt.png)
+
+*Example: Best schedule for `la32` (Large)*  
+![la32 Best Gantt](results/gantt/la32_best_gantt.png)
 
 ## AI Use Disclosure
 
