@@ -206,7 +206,8 @@ The final report contains a reduced 3×3 genotype-to-schedule example using:
 
 ```text
 [0,1,2,0,2,1,0,1,2]
-``
+```
+
 The example demonstrates:
 
 ```text
@@ -218,7 +219,7 @@ The resulting feasible schedule has:
 Cmax = 12
 ```
 
-The same decoding principles are implemented by `decode_chromosome()´ in ´`jssp_ga.py.
+The same decoding principles are implemented by `decode_chromosome()` in `jssp_ga.py`.
 
 ## `verify_project.py`
 
