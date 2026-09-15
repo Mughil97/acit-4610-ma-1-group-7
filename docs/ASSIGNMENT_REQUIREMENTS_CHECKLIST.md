@@ -85,7 +85,6 @@
 ## Before submission
 
 - [ ] Run `python verify_project.py` from a clean environment.
-- [ ] Run `python example_decode.py`.
 - [ ] Run `python run_experiments.py --quick` as an execution check; outputs are written to `results/quick/`.
 - [ ] Run the 20-run experiment on the computer used for timing claims if timing values will be reported from that machine.
 - [ ] Confirm the GitHub repository is accessible using the submitted link.
