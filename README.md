@@ -111,13 +111,16 @@ flowchart TD
 
 For each gene:
 
-1. identify the next unscheduled operation of the referenced job;
-2. read its required machine and processing time;
-3. determine the job-ready time from the completion of the job's preceding operation;
-4. inspect the occupied intervals on the required machine;
-5. place the operation into the earliest non-overlapping idle slot that begins no earlier than its job-ready time;
-6. record the operation's start and finish times;
-7. continue until all operations have been scheduled.
+1. Identify the next unscheduled operation of the referenced job.
+2. Read its required machine and processing time.
+3. Determine its job-ready time from the completion time of its preceding operation.
+4. Inspect the occupied intervals on the required machine.
+5. Place the operation in the earliest feasible, non-overlapping idle slot that begins no earlier than its job-ready time.
+6. Record the operation’s start and finish times.
+7. Update the job-ready time and next-operation index.
+8. Continue until all chromosome genes have been decoded.
+9. Calculate $C_{\max}$ and return the completed schedule.
+
 
 #### Resource Allocation
 
